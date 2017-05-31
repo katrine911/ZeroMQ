@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.IO;
-
 using ZeroMQ;
-
 namespace Examples
 {
     static partial class Program
@@ -15,29 +13,20 @@ namespace Examples
         {
             if (args == null || args.Length < 1)
             {
-                Console.WriteLine("Привет, добро пожаловать на сервер.");
+                Console.WriteLine("Добро пожаловать на сервер.");
                 Console.WriteLine();
             }
-
-            // Create
             using (var context = new ZContext())
             using (var responder = new ZSocket(context, ZSocketType.REP))
             {
-                // Bind
                 responder.Bind("tcp://*:5555");
-
                 while (true)
                 {
-                    // Receive
                     using (ZFrame request = responder.ReceiveFrame())
                     {
                         string receivedString = request.ReadString();
                         Console.WriteLine("Received {0}", receivedString);
-
-                        // Do some work
                         Thread.Sleep(1);
-
-                        // Send
                         string a = Encoding.UTF8.GetBytes(receivedString).Length.ToString();
                         responder.Send(new ZFrame(a));
                     }
